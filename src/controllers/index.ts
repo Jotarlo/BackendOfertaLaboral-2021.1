@@ -15,3 +15,4 @@ export * from './tipo-usuario-usuario.controller';
 export * from './trabaja-profesion-persona.controller';
 export * from './usuario-tipo-usuario.controller';
 export * from './persona-profesion.controller';
+export * from './usuario.controller';
