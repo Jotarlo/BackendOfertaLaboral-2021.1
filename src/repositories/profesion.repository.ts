@@ -7,10 +7,12 @@ export class ProfesionRepository extends DefaultCrudRepository<
   Profesion,
   typeof Profesion.prototype.id,
   ProfesionRelations
-> {
+  > {
+
   constructor(
-    @inject('datasources.mysqlds') dataSource: MysqldsDataSource,
+    @inject('datasources.mysqlds') dataSource: MysqldsDataSource
   ) {
     super(Profesion, dataSource);
+
   }
 }

@@ -15,7 +15,6 @@ export class Profesion extends Entity {
   })
   nombre: string;
 
-
   constructor(data?: Partial<Profesion>) {
     super(data);
   }
