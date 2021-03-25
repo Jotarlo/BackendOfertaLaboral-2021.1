@@ -8,7 +8,7 @@ export class Usuario extends Entity {
     id: true,
     generated: true,
   })
-  _id?: string;
+  id?: string;
 
   @property({
     type: 'string',
@@ -18,9 +18,8 @@ export class Usuario extends Entity {
 
   @property({
     type: 'string',
-    required: true,
   })
-  clave: string;
+  clave?: string;
 
   @belongsTo(() => TipoUsuario)
   tipoUsuarioId: string;

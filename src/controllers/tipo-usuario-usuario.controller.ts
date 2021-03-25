@@ -3,7 +3,7 @@ import {
   CountSchema,
   Filter,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
   del,
@@ -13,11 +13,11 @@ import {
   param,
   patch,
   post,
-  requestBody,
+  requestBody
 } from '@loopback/rest';
 import {
   TipoUsuario,
-  Usuario,
+  Usuario
 } from '../models';
 import {TipoUsuarioRepository} from '../repositories';
 
@@ -54,18 +54,18 @@ export class TipoUsuarioUsuarioController {
     },
   })
   async create(
-    @param.path.string('id') id: typeof TipoUsuario.prototype._id,
+    @param.path.string('id') id: typeof TipoUsuario.prototype.id,
     @requestBody({
       content: {
         'application/json': {
           schema: getModelSchemaRef(Usuario, {
             title: 'NewUsuarioInTipoUsuario',
-            exclude: ['_id'],
+            exclude: ['id'],
             optional: ['tipoUsuarioId']
           }),
         },
       },
-    }) usuario: Omit<Usuario, '_id'>,
+    }) usuario: Omit<Usuario, 'id'>,
   ): Promise<Usuario> {
     return this.tipoUsuarioRepository.usuarios(id).create(usuario);
   }
