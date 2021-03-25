@@ -9,7 +9,7 @@ import {
 } from '@loopback/repository';
 import {
   del, get,
-  getModelSchemaRef, param,
+  getModelSchemaRef, HttpErrors, param,
 
 
   patch, post,
@@ -23,9 +23,9 @@ import {
   response
 } from '@loopback/rest';
 import {Keys as llaves} from '../config/keys';
-import {Usuario} from '../models';
+import {Credenciales, Usuario} from '../models';
 import {UsuarioRepository} from '../repositories';
-import {FuncionesGeneralesService, NotificacionesService} from '../services';
+import {FuncionesGeneralesService, NotificacionesService, SesionJwtService} from '../services';
 
 export class UsuarioController {
   constructor(
@@ -34,7 +34,9 @@ export class UsuarioController {
     @service(FuncionesGeneralesService)
     public servicioFunciones: FuncionesGeneralesService,
     @service(NotificacionesService)
-    public servicioNotificaciones: NotificacionesService
+    public servicioNotificaciones: NotificacionesService,
+    @service(SesionJwtService)
+    public servicioJWT: SesionJwtService
   ) { }
 
   @post('/usuarios')
@@ -74,6 +76,33 @@ export class UsuarioController {
     }
     nuevoUsuario.clave = '';
     return nuevoUsuario;
+  }
+
+
+  @post('/identificar')
+  async identificar(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Credenciales),
+        },
+      },
+    })
+    credenciales: Credenciales,
+  ): Promise<object> {
+    let usuario = await this.usuarioRepository.findOne({where: {nombre_usuario: credenciales.nombre_usuario, clave: credenciales.clave}});
+    if (usuario) {
+      let token = this.servicioJWT.CrearTokenJWT(usuario);
+      return {
+        datos: {
+          nom_usuario: usuario.nombre_usuario,
+          rol: usuario.tipoUsuarioId
+        },
+        tk: token
+      }
+    } else {
+      throw new HttpErrors[401]("Credecniales inválidas.");
+    }
   }
 
   @get('/usuarios/count')
