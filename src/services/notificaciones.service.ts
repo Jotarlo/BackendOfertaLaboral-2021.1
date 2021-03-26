@@ -1,15 +1,15 @@
 import { /* inject, */ BindingScope, injectable} from '@loopback/core';
 import {Keys as llaves} from '../config/keys';
-const sgMail = require('@sendgrid/mail')
+const sgMail = require('@sendgrid/mail');
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class NotificacionesService {
   constructor(/* Add @inject to inject parameters */) { }
 
   /**
-   * Envío de notificación mediante correo electrónico
+   * Envío de correo electrónico
    */
-  EnviarCorreoElectronico(destino: string, asunto: string, contenido: string) {
+  EnviarCorreoElectrónico(destino: string, asunto: string, contenido: string) {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY)
     const msg = {
       to: destino, // Change to your recipient
@@ -26,5 +26,4 @@ export class NotificacionesService {
         console.error(error)
       })
   }
-
 }
