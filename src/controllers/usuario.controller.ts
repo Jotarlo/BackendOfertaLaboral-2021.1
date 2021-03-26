@@ -9,7 +9,7 @@ import {
 } from '@loopback/repository';
 import {
   del, get,
-  getModelSchemaRef, param,
+  getModelSchemaRef, HttpErrors, param,
 
 
   patch, post,
@@ -24,9 +24,9 @@ import {
 } from '@loopback/rest';
 import {Keys as llaves} from '../config/keys';
 import {Usuario} from '../models';
+import {Credenciales} from '../models/credenciales.model';
 import {UsuarioRepository} from '../repositories';
-import {FuncionesGeneralesService, NotificacionesService} from '../services';
-
+import {FuncionesGeneralesService, NotificacionesService, SesionService} from '../services';
 export class UsuarioController {
   constructor(
     @repository(UsuarioRepository)
@@ -34,7 +34,9 @@ export class UsuarioController {
     @service(FuncionesGeneralesService)
     public servicioFunciones: FuncionesGeneralesService,
     @service(NotificacionesService)
-    public servicioNotificaciones: NotificacionesService
+    public servicioNotificaciones: NotificacionesService,
+    @service(SesionService)
+    public servicioSesion: SesionService
   ) { }
 
   @post('/usuarios')
@@ -76,6 +78,35 @@ export class UsuarioController {
     }
 
     return usuarioCreado;
+  }
+
+  @post('/identificar-usuario')
+  async validar(
+    @requestBody(
+      {
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(Credenciales)
+          }
+        }
+      }
+    )
+    credenciales: Credenciales
+  ): Promise<object> {
+    let usuario = await this.usuarioRepository.findOne({where: {nombre_usuario: credenciales.nombre_usuario, clave: credenciales.clave}});
+    if (usuario) {
+      // generar un token
+      let token = this.servicioSesion.GenerarToken(usuario);
+      return {
+        user: {
+          username: usuario.nombre_usuario,
+          role: usuario.tipoUsuarioId
+        },
+        tk: token
+      };
+    } else {
+      throw new HttpErrors[401]("Las credenciales no son correctas.");
+    }
   }
 
   @get('/usuarios/count')
