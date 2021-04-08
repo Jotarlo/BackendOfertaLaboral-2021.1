@@ -23,3 +23,4 @@ export * from './profesion.controller';
 export * from './persona.controller';
 export * from './empresa.controller';
 export * from './cargar-archivo.controller';
+export * from './descarga-archivos.controller';
